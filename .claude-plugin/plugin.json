@@ -1,0 +1,7 @@
+{
+  "name": "aule",
+  "version": "0.1.0",
+  "description": "Drive After Effects from your agent through Aulë, then forge the project into a Continuum template and render its variants in the cloud.",
+  "author": { "name": "Continuum" },
+  "homepage": "https://github.com/Continuum-AI-Agency/aule-skills"
+}
