@@ -1,83 +1,67 @@
 ---
 name: aule-adobe
-description: Drive the person's own Adobe apps through Aulë — After Effects, Photoshop, Illustrator and Premiere Pro — to build and edit designs and motion with scripts, make them Forge-ready, send them to Aulë, and render their variants at scale in the Continuum cloud. Use when someone asks to make or change an After Effects comp, a Photoshop or Illustrator design, or a Premiere sequence, or to turn one into a template and render versions of it.
+description: Script the person's open After Effects, Photoshop, Illustrator or Premiere Pro document through Aulë (adobe_run, adobe_frame, adobe_send), make it Forge-ready, and render its variants in the Continuum cloud. Use when asked to build or change one of these files, turn it into a template, or render versions of it; not for general Adobe how-to questions.
 ---
 
 # Aulë for Adobe
 
-Aulë is Continuum's desktop app. Its panels in After Effects, Photoshop, Illustrator and Premiere Pro let you run
-scripts in what the person has open, one undo step per call. When the work is ready, Aulë sends it in, Forge turns it
-into a template, and the Continuum cloud renders as many variants as the person needs. The Adobe apps only draw while
-you author; every delivered file is rendered in the cloud (Photoshop, Illustrator and Premiere work is rebuilt as an
-After Effects template there).
+Aulë's panel in each Adobe app runs your scripts in the open document. `adobe_send` brings the work into Aulë, Forge
+makes it a template, and the Continuum cloud renders the variants (Photoshop, Illustrator and Premiere work is rebuilt
+there as an After Effects template). Nothing delivered is rendered on this computer.
 
-Every tool takes `app`: `"aftereffects"`, `"photoshop"`, `"illustrator"` or `"premiere"`.
+`adobe_*` tools take `app`: `"aftereffects"`, `"photoshop"`, `"illustrator"` or `"premiere"` (`adobe_install` takes
+`apps`). Library and render tools take `brandId` and the ids earlier answers give you. Answers carry `message` (tell
+the person) and, when there is more to do, `next`: the exact call to make.
 
 ## 1. Connect
 
-1. Find the Aulë tools: `adobe_status`, `adobe_run`, `adobe_frame`, `adobe_send` (MCP server `aule`; names may carry
-   a prefix such as `mcp__aule__`). If they are missing:
-   - Aulë must be installed (`/Applications/Aule.app`); if not, ask the person to install it.
-   - Add the MCP server: `claude mcp add aule -- /Applications/Aule.app/Contents/MacOS/aule mcp`, or
-     `codex mcp add aule -- /Applications/Aule.app/Contents/MacOS/aule mcp`, then restart the session.
-   - Or call it over the shell (it starts Aulë if needed):
-     `echo '{"app":"aftereffects","script":"return app.version"}' | /Applications/Aule.app/Contents/MacOS/aule call adobe_run -`.
-     Every tool below is `aule call <name> '<json>'`; `aule commands` lists them all.
-2. `auth_status`. Nobody signed in to Continuum: `auth_sign_in` opens their browser; the person finishes it.
-3. `adobe_status` lists which apps have the panel connected, and the selected `brandId`.
-   - The app you need is not connected: `adobe_install` once, then ask the person to restart the app and open the
-     panel: After Effects and Illustrator **Window → Extensions → Aulë**; Photoshop **Plugins → Aulë**; Premiere
-     **Window → UXP Plugins → Aulë**. Aulë must be running. (The panels are unsigned for now: say so. After Effects and
-     Illustrator need Adobe's CEP debug mode, which `adobe_install` turns on; Photoshop and Premiere may need the UXP
-     Developer Tool if Creative Cloud refuses the unsigned plugin — `adobe_install` says which.)
-   - `brandId: null`: `workspaces_list`, ask which workspace, `workspaces_select`.
-   - `adobe_status {app}` reads what is open in that app. Nothing open, or never saved: ask the person to open or save
-     it; `adobe_send` needs a saved file.
+1. The tools come from the MCP server `aule` (names may carry a prefix such as `mcp__aule__`). Missing, or Aulë not
+   installed: [references/connect.md](references/connect.md).
+2. `auth_status`. Not signed in to Continuum: `auth_sign_in` opens the person's browser; they finish it.
+3. `adobe_status` lists the apps with `connected: true` and the selected `brandId`.
+   - Your app is not connected: [references/connect.md](references/connect.md), then `adobe_status` until it is.
+   - `brandId: null`: `workspaces_list`, ask which, `workspaces_select`.
+   - `adobe_status {app}` reads the open document. Nothing open, or never saved: ask the person; `adobe_send` needs
+     a saved file.
 
 ## 2. Edit
 
-- Read before you write: `adobe_status {app}`, then scripts that return what you need.
-- `adobe_run {app, script, label}`: one small edit per call with a human label (`"add title text"`). The person sees the
-  label in Undo and can undo any of your steps. `return` plain values; a thrown error comes back with its message.
-  The script language differs per app — read the reference first:
-  - After Effects: ES3 ExtendScript function body — [references/after-effects.md](references/after-effects.md)
-  - Illustrator: ES3 ExtendScript function body — [references/illustrator.md](references/illustrator.md)
-  - Photoshop: modern async JavaScript with the `photoshop` UXP module — [references/photoshop.md](references/photoshop.md)
-  - Premiere Pro: modern async JavaScript with the `premierepro` UXP module and `edit(...)` —
-    [references/premiere.md](references/premiere.md)
-- Never open, close, save or "save as" files yourself, and don't delete or rename what the person made unless they
-  asked. `adobe_send` does the saving.
-- Look at your work: `adobe_frame {app, …}` saves a PNG and answers its `path`; read the image. After Effects
-  `{comp?, time?}`; Photoshop the document; Illustrator the active artboard. Premiere has no frame yet: ask the person
-  to look, or use `preview_frame` once the template is in Aulë.
+- Read before you write: `adobe_status {app}`, then scripts that `return` what you need.
+- `adobe_run {app, script, label}`: one small change per call, with a label the person sees in Undo (`"add title
+  text"`). After Effects, Photoshop and Premiere make each call one undo step; Illustrator may split a call into
+  several, so keep Illustrator calls to one change. `return` plain values.
+- A thrown error answers `invalid_input` with its message. Photoshop rolls the call back, and in Premiere only `edit`
+  changes the document; After Effects and Illustrator keep whatever ran before the throw, so re-read before you retry.
+- Read the app's reference before its first script:
+  - After Effects: ES3 ExtendScript — [references/after-effects.md](references/after-effects.md)
+  - Illustrator: ES3 ExtendScript — [references/illustrator.md](references/illustrator.md)
+  - Photoshop: async JavaScript, `photoshop` UXP module — [references/photoshop.md](references/photoshop.md)
+  - Premiere Pro: async JavaScript, `premierepro` module and `edit(...)` — [references/premiere.md](references/premiere.md)
+- Never open, close or save files: `adobe_send` saves a copy. Don't delete the person's layers; rename one only to make
+  it a field, and say which.
+- Look at your work: `adobe_frame {app}` saves a PNG and answers its `path`; read the image. After Effects takes
+  `{comp?, time?}`; Illustrator draws the active artboard. Premiere has no frame: look at a proof render after sending.
 
 ## 3. Make it Forge-ready
 
-Build with Forge's rules in mind from the start ([references/forge-ready.md](references/forge-ready.md)):
+Build to Forge's rules from the start: [references/forge-ready.md](references/forge-ready.md). In short: After Effects
+delivers `RENDER <name>` comps whose variable parts are Essential Properties; Photoshop and Illustrator deliver one
+artboard per size with named layers; Premiere delivers its top-level sequences, with graphic text and clips as fields.
+Use installed fonts (not Adobe Fonts) and media that exists.
 
-- After Effects: deliverable comps named `RENDER <name>`; everything a variant changes is an **Essential Property**.
-- Photoshop / Illustrator: one artboard per deliverable size; name every layer a person would change (text and
-  images become fields by layer name).
-- Premiere: top-level sequences are the deliverables; graphic text and clips become fields; effects, transitions and
-  colour grading are not carried.
-- Everywhere: installed fonts (not Adobe Fonts), footage and images that exist, no line breaks in text values.
+## 4. Send, forge, render
 
-## 4. Send to Aulë, forge, render
+Every answer and what to do next: [references/scale.md](references/scale.md).
 
-Full steps and what each answer means: [references/scale.md](references/scale.md).
-
-1. `adobe_send {app}` saves a copy with its media, uploads it with every font it uses, and queues the Forge. Tell the
-   person its `message`, and anything in `skipped` (media) and `fonts.left`.
-   - `outcome: "named"`: a template already has this name. Ask whether this is its next revision or a new template,
-     then `adobe_send {app, sameName: "revision" | "new"}`. A file sent from this computer before always becomes its
-     template's next revision.
-   - `state: "uploading" | "parsing"`: it stopped waiting; call what `next` says.
-   - `state: "not_forged"`: `forge.refused` says why (missing fonts or media, a published template).
-2. `library_wait {brandId, assetIds: [assetId], until: "review"}`. Answer a run's questions with `library_run` /
-   `library_forge {action: "decisions"}`.
-3. Publishing is the person's decision: they promote it in Aulë, or tell you to (`library_forge {action: "promote"}`).
-4. Proofs first: `render_templates` (find the `templateKey` whose `sourceAssetId` is the asset) → `render_inputs` →
-   `render_batch_preflight {templateKey, rows}` with 2–3 rows → `render_batch_submit {confirmationToken}` →
-   `render_wait {batchId}`. Show the outputs; run the full batch (≤ 50 rows per batch) only when they agree.
+1. `adobe_send {app}`. Tell the person its `message`, any `skipped` media and `fonts.left`.
+   - `outcome: "named"`: a template already has this name. Ask, then `adobe_send {app, sameName: "revision" | "new"}`.
+   - `outcome: "same"`: it is already in Aulë as it is.
+   - `state: "forge_queued"`: go on. Any other `state`: do what `next` says.
+   - An error: tell the person its message, and check `adobe_status` before trying again.
+2. `library_wait {brandId, assetIds: [assetId], until: "review"}`. A run with questions: `library_run {brandId,
+   assetId}`, then `library_forge {brandId, assetId, action: "decisions", …}`.
+3. Publishing is the person's call: they promote it in Aulë, or ask you to (`library_forge {…, action: "promote"}`).
+4. Proofs: 2–3 rows through `render_batch_preflight` → `render_batch_submit` → `render_wait` (scale.md §4). Submit
+   only when every row is `READY`. Show the outputs; run the full batch (≤ 50 rows each) only when the person agrees.
 
 Renders cost money. Every slow step has a `*_wait` tool: call it instead of polling.

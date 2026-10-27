@@ -14,7 +14,7 @@ the work into a Continuum template and render its variants at scale in the cloud
 
 ## Requirements
 
-- macOS, with [Aulë](https://trycontinuum.ai) installed in `/Applications`
+- macOS or Windows (where the Adobe apps run), with [Aulë](https://trycontinuum.ai) installed
 - Any of: After Effects 2024 or later, Illustrator 2024 or later, Photoshop 2024 (25.0) or later, Premiere Pro 25.6
   or later
 - A Continuum account with a brand to render in
@@ -30,16 +30,20 @@ claude plugin marketplace add Continuum-AI-Agency/aule-skills
 claude plugin install aule@aule
 ```
 
+Enabling it asks for Aulë's binary: keep the macOS default, or give `%LOCALAPPDATA%\Aule\aule.exe` on Windows.
+
 Codex or ChatGPT desktop:
 
 ```sh
 codex plugin marketplace add Continuum-AI-Agency/aule-skills
 ```
 
-then install **Aulë for After Effects** from the Plugins Directory.
+then install **Aulë for Adobe** from the Plugins Directory. On Windows, point its MCP server at Aulë yourself:
+`codex mcp add aule -- "%LOCALAPPDATA%\Aule\aule.exe" mcp`.
 
 The skill alone, for any agent that reads skills (connect Aulë's MCP server yourself:
-`/Applications/Aule.app/Contents/MacOS/aule mcp`):
+`<Aulë binary> mcp`, with the binary for your OS from
+[connect.md](skills/aule-adobe/references/connect.md)):
 
 ```sh
 npx skills add Continuum-AI-Agency/aule-skills
@@ -47,8 +51,8 @@ npx skills add Continuum-AI-Agency/aule-skills
 
 ## First run
 
-1. **Open Aulë.** The pilot build isn't notarized yet: the first time, open it from Applications, then allow it in
-   System Settings → Privacy & Security → **Open Anyway**.
+1. **Open Aulë.** Installed with its install command, it opens directly. From a downloaded `.dmg` on macOS (not
+   notarized), open it once, then System Settings → Privacy & Security → **Open Anyway**.
 2. **Sign in with Continuum** and pick the workspace (brand) to render in.
 3. **Install the panels:** in Aulë's account menu, **Install Adobe panels** (or let your agent run `adobe_install`).
    The panels are unsigned for now: After Effects and Illustrator need Adobe's CEP debug mode, which this turns on;
@@ -64,8 +68,8 @@ file, and starts the Forge. Adobe Fonts stay on your computer, because their lic
 them off servers: add a licensed copy in Aulë or pick a substitute there. Footage left linked to your computer
 (After Effects: layered PSD/AI imports, image sequences) is listed when you send.
 
-Something wrong? Aulë's logs are in `~/Library/Application Support/ai.trycontinuum.aule/logs/`; send them with a
-note on what you did.
+Something wrong? Aulë's logs are in `ai.trycontinuum.aule/logs/` under `~/Library/Application Support` (macOS),
+`%APPDATA%` (Windows) or `~/.local/share` (Linux); send them with a note on what you did.
 
 ## Try it
 

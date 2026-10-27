@@ -1,4 +1,4 @@
-# From After Effects to renders at scale
+# From an Adobe app to renders at scale
 
 Every slow step has a blocking `*_wait` tool that returns one line per item. Call it instead of polling; when it
 answers `done: false` (its timeout), call it again.
@@ -7,7 +7,7 @@ answers `done: false` (its timeout), call it again.
 
 `adobe_send {app}` saves a copy of what is open with its media (After Effects: footage collected into `footage/`;
 Photoshop: linked smart objects embedded; Illustrator: links embedded; Premiere: every clip's file copied into
-`media/`). After Effects and Illustrator reopen the original, so their undo history starts over: finish edits first.
+`media/`). After Effects, Illustrator and Premiere reopen the original, so their undo history starts over: finish edits first.
 Photoshop, Illustrator and Premiere work is rebuilt as an After Effects template on the server. It uploads the copy as one ZIP, waits for
 Aulë to read it, and queues the Forge. Every font the project uses goes up with it (all but Adobe Fonts). It
 answers:
@@ -34,25 +34,33 @@ answers:
 - `outcome: "named"`: a template already has this name and this project wasn't sent from this computer. Ask:
   `adobe_send {app, sameName: "revision"}` (its next revision) or `"new"` (a separate template).
 - `outcome: "same"`: these exact bytes are already the template `assetId`.
-- `state`:
-  - `"uploading"` or `"parsing"`: it stopped waiting (`timeoutSec`, default 600). Call what `next` says.
-  - `"not_forged"`: `forge.refused[0].reason` says why. Fix it, then `library_forge_all {brandId, items: [{assetId}]}`.
+- `state` (with `outcome: "sent"`):
+  - `"uploading"` or `"parsing"`: it stopped waiting (`timeoutSec`, default and most 600). Call what `next` says.
+  - `"not_imported"`: a Photoshop, Illustrator or Premiere file is in Aulë but did not become a template; `message`
+    says why. Fix it, then `next` (`library_import {brandId, assetId}`).
+  - `"not_forged"`: `forge.refused[0].reason` says why: still being read, unreadable, missing footage, already
+    published, or a name too long for its 30-character key (send again with a shorter name). Fix it, then
+    `library_forge_all {brandId, items: [{assetId}]}`.
+  - `"uploaded"`: sent with `forge: false`; it stops once it is in the Library.
   - `"forge_queued"`: go on below.
-- `adobe_send {app, forge: false}` stops once it is in the Library.
+- An error (`invalid_input`, e.g. the file was refused): tell the person its message.
 
 ## 2. Forge
 
 1. `library_wait {brandId, assetIds: [assetId], until: "review"}`. A run that stops with `needs_input` has
-   questions: `library_run {assetId}` shows them; answer with `library_forge {action: "decisions", ...}`.
-2. `library_get {assetId}` shows the parse: comps, fields, fonts and missing footage.
-3. Publishing (`library_forge {action: "promote"}`) is the person's decision. Ask; don't promote on your own.
+   questions: `library_run {brandId, assetId}` shows them; answer with
+   `library_forge {brandId, assetId, action: "decisions", ...}`.
+2. `library_get {brandId, assetId}` shows the parse: comps, fields, fonts and missing footage.
+3. Publishing (`library_forge {brandId, assetId, action: "promote"}`) is the person's decision. Ask; don't promote on
+   your own.
 
 ## 3. Uploading another way
 
 `adobe_export {app: "aftereffects"}` alone answers `{aepPath, projectPath, collected, skipped, fonts}` without
 uploading. Then
 `upload_files {brandId, paths: [aepPath], pack: true, linkTo: projectPath}` (`revisionOf: <assetId>` to make it a
-revision) → `upload_wait {uploadIds}` → `library_wait {until: "parsed"}` → `library_forge_all`. For a revision,
+revision) → `upload_wait {uploadIds}` → `library_wait {brandId, assetIds: [assetId], until: "parsed"}` →
+`library_forge_all {brandId, items: [{assetId}]}`. For a revision,
 `upload_wait` answers `revisionOf`: wait on that template, not the upload's `assetId`.
 
 ## 4. Proof, then batch
