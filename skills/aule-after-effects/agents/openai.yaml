@@ -1,4 +1,0 @@
-interface:
-  display_name: "Aulë for After Effects"
-  short_description: "Edit in After Effects, then forge and render variants in the cloud"
-  default_prompt: "Use $aule-after-effects to build a RENDER comp in After Effects, send it to Aulë and render proofs"

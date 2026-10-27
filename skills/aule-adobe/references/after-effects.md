@@ -1,9 +1,9 @@
-# ExtendScript for `ae_run`
+# After Effects: ExtendScript for `adobe_run`
 
-`ae_run` runs your script as the body of a function inside After Effects, wrapped in one undo group:
+`adobe_run {app: "aftereffects", script, label}` runs your script as the body of a function inside After Effects, wrapped in one undo group:
 
 ```js
-// ae_run {"label": "rename title", "script": "..."}
+// adobe_run {"app": "aftereffects", "label": "rename title", "script": "..."}
 var comp = findComp("RENDER Promo 9:16");
 if (!comp) throw new Error("no comp RENDER Promo 9:16");
 comp.layer("Title").name = "Headline";
@@ -114,8 +114,8 @@ return out;
 
 ## Don't
 
-- `app.project.save()`, `app.open()`, `app.newProject()`, `app.quit()`: `ae_send` saves, the person opens.
+- `app.project.save()`, `app.open()`, `app.newProject()`, `app.quit()`: `adobe_send` saves, the person opens.
 - `alert()`, `confirm()`, `prompt()` or anything else that shows a dialog: it blocks After Effects until someone
-  clicks, and `ae_run` times out.
-- `app.beginUndoGroup()` yourself: each `ae_run` already is one.
+  clicks, and `adobe_run` times out.
+- `app.beginUndoGroup()` yourself: each `adobe_run` already is one.
 - Long loops over every frame: set keyframes or expressions instead.

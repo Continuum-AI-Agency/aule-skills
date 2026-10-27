@@ -5,8 +5,10 @@ answers `done: false` (its timeout), call it again.
 
 ## 1. Send
 
-`ae_send` saves the open project, saves a copy with its footage collected into `footage/` beside it, and reopens
-the original (its undo history starts over, so finish edits first). It uploads the copy as one ZIP, waits for
+`adobe_send {app}` saves a copy of what is open with its media (After Effects: footage collected into `footage/`;
+Photoshop: linked smart objects embedded; Illustrator: links embedded; Premiere: every clip's file copied into
+`media/`). After Effects and Illustrator reopen the original, so their undo history starts over: finish edits first.
+Photoshop, Illustrator and Premiere work is rebuilt as an After Effects template on the server. It uploads the copy as one ZIP, waits for
 Aulë to read it, and queues the Forge. Every font the project uses goes up with it (all but Adobe Fonts). It
 answers:
 
@@ -30,13 +32,13 @@ answers:
   `.ttf`/`.otf` in Aulë, or accepts a substitute (`library_fonts` lists candidates,
   `library_substitute` picks one).
 - `outcome: "named"`: a template already has this name and this project wasn't sent from this computer. Ask:
-  `ae_send {sameName: "revision"}` (its next revision) or `"new"` (a separate template).
+  `adobe_send {app, sameName: "revision"}` (its next revision) or `"new"` (a separate template).
 - `outcome: "same"`: these exact bytes are already the template `assetId`.
 - `state`:
   - `"uploading"` or `"parsing"`: it stopped waiting (`timeoutSec`, default 600). Call what `next` says.
   - `"not_forged"`: `forge.refused[0].reason` says why. Fix it, then `library_forge_all {brandId, items: [{assetId}]}`.
   - `"forge_queued"`: go on below.
-- `ae_send {forge: false}` stops once it is in the Library.
+- `adobe_send {app, forge: false}` stops once it is in the Library.
 
 ## 2. Forge
 
@@ -47,7 +49,8 @@ answers:
 
 ## 3. Uploading another way
 
-`ae_export` alone answers `{aepPath, projectPath, collected, skipped, fonts}` without uploading. Then
+`adobe_export {app: "aftereffects"}` alone answers `{aepPath, projectPath, collected, skipped, fonts}` without
+uploading. Then
 `upload_files {brandId, paths: [aepPath], pack: true, linkTo: projectPath}` (`revisionOf: <assetId>` to make it a
 revision) → `upload_wait {uploadIds}` → `library_wait {until: "parsed"}` → `library_forge_all`. For a revision,
 `upload_wait` answers `revisionOf`: wait on that template, not the upload's `assetId`.

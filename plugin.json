@@ -1,23 +1,39 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "aule",
-  "version": "0.1.0",
-  "description": "Drive After Effects from your agent through Aulë, then forge the project into a Continuum template and render its variants in the cloud.",
-  "author": { "name": "Continuum", "url": "https://trycontinuum.ai" },
+  "version": "0.2.0",
+  "description": "Drive After Effects, Photoshop, Illustrator and Premiere Pro from your agent through Aulë, then forge the work into Continuum templates and render their variants in the cloud.",
+  "author": {
+    "name": "Continuum",
+    "url": "https://trycontinuum.ai"
+  },
   "homepage": "https://github.com/Continuum-AI-Agency/aule-skills",
   "repository": "https://github.com/Continuum-AI-Agency/aule-skills",
-  "keywords": ["after-effects", "motion-graphics", "templates", "rendering", "aule", "continuum"],
+  "keywords": [
+    "after-effects",
+    "photoshop",
+    "illustrator",
+    "premiere-pro",
+    "motion-graphics",
+    "templates",
+    "rendering",
+    "aule",
+    "continuum"
+  ],
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Aulë for After Effects",
-        "shortDescription": "Edit in After Effects, render variants at scale",
+        "displayName": "Aulë for Adobe",
+        "shortDescription": "Edit in your Adobe apps, render variants at scale",
         "developerName": "Continuum",
         "category": "Creativity",
-        "capabilities": ["Read", "Write"],
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
         "websiteURL": "https://trycontinuum.ai",
         "defaultPrompt": [
-          "Use $aule-after-effects to build a 1080x1920 RENDER lower-third with name and title fields, then render 3 proofs"
+          "Use $aule-adobe to build a 1080x1920 RENDER lower-third in After Effects with name and title fields, then render 3 proofs"
         ]
       }
     }

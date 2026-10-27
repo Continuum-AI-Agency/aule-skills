@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aulë for Adobe"
+  short_description: "Edit in After Effects, Photoshop, Illustrator or Premiere, then forge and render variants in the cloud"
+  default_prompt: "Use $aule-adobe to build a RENDER comp in After Effects, send it to Aulë and render proofs"

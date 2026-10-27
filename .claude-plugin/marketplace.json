@@ -1,12 +1,12 @@
 {
   "name": "aule",
-  "description": "Aulë plugins from Continuum",
+  "description": "Drive After Effects, Photoshop, Illustrator and Premiere Pro from your agent through Aulë, then forge the work into Continuum templates and render their variants in the cloud.",
   "owner": { "name": "Continuum" },
   "plugins": [
     {
       "name": "aule",
       "source": "./",
-      "description": "Drive After Effects through Aulë; forge and render variants in the Continuum cloud"
+      "description": "Drive After Effects, Photoshop, Illustrator and Premiere Pro from your agent through Aulë, then forge the work into Continuum templates and render their variants in the cloud."
     }
   ]
 }
