@@ -1,9 +1,17 @@
 {
   "name": "aule",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Drive After Effects, Photoshop, Illustrator and Premiere Pro from your agent through Aulë, then forge the work into Continuum templates and render their variants in the cloud.",
   "author": {
     "name": "Continuum"
   },
-  "homepage": "https://github.com/Continuum-AI-Agency/aule-skills"
+  "homepage": "https://github.com/Continuum-AI-Agency/aule-skills",
+  "userConfig": {
+    "aule_binary": {
+      "type": "file",
+      "title": "Aulë binary",
+      "description": "Aulë's app binary, which serves MCP. macOS: /Applications/Aule.app/Contents/MacOS/aule; Windows: %LOCALAPPDATA%\\Aule\\aule.exe; Linux: ~/.local/bin/aule",
+      "default": "/Applications/Aule.app/Contents/MacOS/aule"
+    }
+  }
 }

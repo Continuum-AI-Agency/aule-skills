@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "aule",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Drive After Effects, Photoshop, Illustrator and Premiere Pro from your agent through Aulë, then forge the work into Continuum templates and render their variants in the cloud.",
   "author": {
     "name": "Continuum",

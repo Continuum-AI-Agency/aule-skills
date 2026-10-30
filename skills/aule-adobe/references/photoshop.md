@@ -19,11 +19,11 @@ return { document: doc.name, layers: doc.layers.length };
 - Modern JavaScript: `const`, arrow functions, `await`. **Properties are synchronous; methods are async** — `await`
   every method call (`await layer.scale(80, 80)`).
 - Return plain data (strings, numbers, arrays and objects of those), not layers or documents.
-- `doc.layers` is the top level; a group's children are its `layers`; `layer.kind` says what it is (`"text"`,
-  `"group"`, `"smartObject"`, `"pixel"`…); `doc.activeLayers` is the selection.
+- `doc.layers` is the top level; a group's children are its `layers`; `layer.kind` says what it is: compare it with
+  `photoshop.constants.LayerKind` (`.TEXT`, `.GROUP`, `.SMARTOBJECT`, `.PIXEL`…); `doc.activeLayers` is the selection.
 - Text: a text layer's `layer.textItem` holds `contents` and its character style (font, size, colour).
-- Changing things: `layer.opacity = 80`, `await layer.scale(x%, y%)`, `await layer.translate(dx, dy)`,
-  `await doc.createLayer({ name })`, `layer.bringToFront()`.
+- Changing things: `layer.opacity = 80`, `await layer.scale(80, 80)` (percent), `await layer.translate(dx, dy)`,
+  `await doc.createLayer({ name })`, `await layer.bringToFront()`.
 - Anything the DOM lacks: `await photoshop.action.batchPlay([descriptor], {})` with a plain action descriptor.
 - Check a member before you rely on it: the
   [Photoshop UXP reference](https://developer.adobe.com/photoshop/uxp/2022/ps_reference/) lists each class and the

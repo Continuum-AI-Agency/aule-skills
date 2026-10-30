@@ -1,5 +1,5 @@
 {
   "mcpServers": {
-    "aule": { "command": "/Applications/Aule.app/Contents/MacOS/aule", "args": ["mcp"] }
+    "aule": { "command": "${user_config.aule_binary}", "args": ["mcp"] }
   }
 }

@@ -10,7 +10,8 @@ comp.layer("Title").name = "Headline";
 return { comp: comp.name, layers: comp.numLayers };
 ```
 
-Each call is separate: define the helpers you need in every script.
+`findComp(name)` (the comp with that name, or `null`) is given to every script. Each call is separate: define any
+other helper you need in the script that uses it.
 
 ## ES3, not modern JavaScript
 
@@ -39,7 +40,7 @@ var active = app.project.activeItem;         // the comp open in the viewer, if 
 ## Make things
 
 ```js
-var comp = app.project.items.addComp("RENDER Lower Third 9:16", 1080, 1920, 1, 6, 30); // name, w, h, aspect, sec, fps
+var comp = app.project.items.addComp("RENDER Lower Third 9:16", 1080, 1920, 1, 6, 30); // name, width, height, pixel aspect, duration (s), fps
 comp.openInViewer();
 
 var bg = comp.layers.addSolid([0.1, 0.1, 0.12], "Background", comp.width, comp.height, 1);
@@ -91,6 +92,7 @@ opacity.expression = "linear(time, 0, 0.4, 0, 100)";
 ## Expose fields (Essential Properties)
 
 ```js
+var comp = findComp("RENDER Lower Third 9:16");
 var text = comp.layer("Name").property("ADBE Text Properties").property("ADBE Text Document");
 text.addToMotionGraphicsTemplateAs(comp, "Name");
 var fill = comp.layer("Bar").property("ADBE Root Vectors Group").property(1)
@@ -107,7 +109,7 @@ return comp.motionGraphicsTemplateControllerCount;
 var out = [];
 for (var i = 1; i <= comp.numLayers; i++) {
   var l = comp.layer(i);
-  out.push({ index: i, name: l.name, type: l.reflect.name, enabled: l.enabled, solo: l.solo, in: l.inPoint, out: l.outPoint });
+  out.push({ index: i, name: l.name, type: l.reflect.name, enabled: l.enabled, solo: l.solo, "in": l.inPoint, "out": l.outPoint }); // ES3: quote reserved words as keys
 }
 return out;
 ```

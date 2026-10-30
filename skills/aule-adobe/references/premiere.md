@@ -13,14 +13,15 @@ if (!project) throw new Error("open a project first");
 const seq = await project.getActiveSequence();
 if (!seq) throw new Error("no active sequence");
 const [size, item] = await Promise.all([seq.getFrameSize(), seq.getProjectItem()]);
-edit(() => [item.createSetNameAction("RENDER Promo 9:16")]);
-return { sequence: "RENDER Promo 9:16", width: size.width, height: size.height };
+// Forge names the deliverable `RENDER <sequence>` itself: name the sequence for its size.
+edit(() => [item.createSetNameAction("Promo 9:16")]);
+return { sequence: "Promo 9:16", width: size.width, height: size.height };
 ```
 
 - Modern JavaScript. **Methods are async — `await` them**; properties are synchronous.
 - Reading: `await project.getSequences()`, `await project.getActiveSequence()`, `await seq.getFrameSize()`,
   `await seq.getEndTime()` (`.seconds`), `await seq.getVideoTrack(i)` and its track items, `await seq.getProjectItem()`,
-  and a clip project item's `await getMediaFilePath()`.
+  and a clip's file: `const clip = premierepro.ClipProjectItem.cast(item); if (clip && !(await clip.isSequence())) path = await clip.getMediaFilePath();`.
 - Actions (the `create…Action` methods on sequences, clips, components and parameters) must be created inside
   `build`; `edit` throws if Premiere does not apply them.
 - Return plain data, not Premiere objects.
