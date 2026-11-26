@@ -40,7 +40,8 @@ the person) and, when there is more to do, `next`: the exact call to make.
 - Never open, close or save files: `adobe_send` saves a copy. Don't delete the person's layers; rename one only to make
   it a field, and say which.
 - Look at your work: `adobe_frame {app}` saves a PNG and answers its `path`; read the image. After Effects takes
-  `{comp?, time?}`; Illustrator draws the active artboard. Premiere has no frame: look at a proof render after sending.
+  `{comp?, time?}`, Premiere `{sequence?, time?}` (default: the active sequence at the playhead); Illustrator draws the
+  active artboard.
 
 ## 3. Make it Forge-ready
 
