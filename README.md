@@ -5,7 +5,7 @@ the work into a Continuum template and render its variants at scale in the cloud
 
 - **Edit in your app.** Your agent runs scripts in what you have open, through the Aulë panel. Every change is one
   step you can undo (Illustrator: a few steps per change).
-- **See it.** Your agent saves a frame as a PNG and looks at its work before sending (not in Premiere yet).
+- **See it.** Your agent saves a frame as a PNG and looks at its work before sending.
 - **Send to Aulë.** One call (or the panel's button) saves a copy with its media and fonts, uploads it, and starts the
   Forge, which makes it a template. Send again and it becomes the template's next revision. Photoshop, Illustrator
   and Premiere work is rebuilt as an After Effects template in the cloud (Premiere: effects, transitions and colour

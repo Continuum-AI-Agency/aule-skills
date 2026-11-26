@@ -1,7 +1,8 @@
 # Premiere Pro: UXP JavaScript for `adobe_run`
 
 `adobe_run {app: "premiere", script, label}` runs your script as the body of an **async** function. In scope:
-`premierepro` (the UXP module), `uxp`, `project` (the open project, or null) and `edit(build)`.
+`premierepro` (the UXP module), `uxp`, `project` (the open project, or null), `findSequence(name)` (async: the
+sequence, or null) and `edit(build)`.
 
 Premiere changes things through **actions**: read with `await` first, then call `edit` **once** with a synchronous
 `build(project)` that creates and returns the actions. Aulë applies them as one transaction — **one undo step** named by
@@ -25,6 +26,8 @@ return { sequence: "Promo 9:16", width: size.width, height: size.height };
 - Actions (the `create…Action` methods on sequences, clips, components and parameters) must be created inside
   `build`; `edit` throws if Premiere does not apply them.
 - Return plain data, not Premiere objects.
+- Look at a sequence: `adobe_frame {app: "premiere", sequence?, time?}` saves a PNG of one frame (default: the active
+  sequence at the playhead).
 - Check a member before you rely on it: the
   [Premiere Pro UXP reference](https://developer.adobe.com/premiere-pro/uxp/ppro-reference/) and its
   [TypeScript declarations](https://github.com/adobe/premierepro-types) list each class and the version it needs.
